@@ -4,15 +4,21 @@ import { prisma } from '@/lib/db';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mobilyavitrin.com';
 
-    const [products, categories] = await Promise.all([
-        prisma.product.findMany({
-            where: { isActive: true },
-            select: { slug: true, updatedAt: true },
-        }),
-        prisma.category.findMany({
-            select: { slug: true },
-        }),
-    ]);
+    let products: any[] = [];
+    let categories: any[] = [];
+    try {
+        [products, categories] = await Promise.all([
+            prisma.product.findMany({
+                where: { isActive: true },
+                select: { slug: true, updatedAt: true },
+            }),
+            prisma.category.findMany({
+                select: { slug: true },
+            }),
+        ]);
+    } catch (error) {
+        console.warn("Database connection skipped during build for sitemap");
+    }
 
     const productUrls = products.map((product) => ({
         url: `${baseUrl}/products/${product.slug}`,

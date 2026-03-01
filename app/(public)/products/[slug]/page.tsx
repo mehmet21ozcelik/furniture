@@ -8,11 +8,15 @@ import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/seo/jsonl
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-    const products = await prisma.product.findMany({
-        select: { slug: true },
-        where: { isActive: true },
-    });
-    return products.map((p) => ({ slug: p.slug }));
+    try {
+        const products = await prisma.product.findMany({
+            select: { slug: true },
+            where: { isActive: true },
+        });
+        return products.map((p) => ({ slug: p.slug }));
+    } catch (e) {
+        return [];
+    }
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {

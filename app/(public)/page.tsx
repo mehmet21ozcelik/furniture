@@ -5,24 +5,30 @@ import { ProductCard } from "@/components/ui/ProductCard";
 import { generateOrganizationSchema } from "@/lib/seo/jsonld";
 
 export default async function HomePage() {
-    const [categories, featuredProducts] = await Promise.all([
-        prisma.category.findMany({
-            orderBy: { order: "asc" },
-            take: 4,
-        }),
-        prisma.product.findMany({
-            where: {
-                isFeatured: true,
-                isActive: true,
-            },
-            include: {
-                category: {
-                    select: { name: true },
+    let categories: any[] = [];
+    let featuredProducts: any[] = [];
+    try {
+        [categories, featuredProducts] = await Promise.all([
+            prisma.category.findMany({
+                orderBy: { order: "asc" },
+                take: 4,
+            }),
+            prisma.product.findMany({
+                where: {
+                    isFeatured: true,
+                    isActive: true,
                 },
-            },
-            take: 4,
-        }),
-    ]);
+                include: {
+                    category: {
+                        select: { name: true },
+                    },
+                },
+                take: 4,
+            }),
+        ]);
+    } catch (error) {
+        console.warn("Database connection skipped during build");
+    }
 
     const jsonLd = generateOrganizationSchema();
 

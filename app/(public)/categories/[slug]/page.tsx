@@ -6,10 +6,12 @@ import { constructMetadata } from '@/lib/seo/metadata';
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-    const categories = await prisma.category.findMany({
-        select: { slug: true },
-    });
-    return categories.map((c) => ({ slug: c.slug }));
+    try {
+        const categories = await prisma.category.findMany({ select: { slug: true } });
+        return categories.map((c) => ({ slug: c.slug }));
+    } catch (e) {
+        return [];
+    }
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
