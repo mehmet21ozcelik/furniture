@@ -32,6 +32,20 @@ jobs:
   build-and-test:
     needs: lint-and-typecheck
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: furniture
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5433/furniture?schema=public"
       JWT_SECRET: "test-secret"
@@ -48,6 +62,9 @@ jobs:
 
       - name: Prisma Generate
         run: npx prisma generate
+
+      - name: Prisma DB Push
+        run: npx prisma db push
 
       - name: Next.js Build
         run: npm run build
