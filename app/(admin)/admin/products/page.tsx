@@ -18,14 +18,14 @@ export default async function AdminProductsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-serif font-bold text-gray-900">Ürünler</h1>
-                <Link href="/admin/products/new">
-                    <Button>Yeni Ürün Ekle</Button>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900">Ürünler</h1>
+                <Link href="/admin/products/new" className="w-full sm:w-auto">
+                    <Button className="w-full sm:w-auto">Yeni Ürün Ekle</Button>
                 </Link>
             </div>
 
-            <div className="bg-white shadow-sm rounded-lg border overflow-hidden">
+            <div className="bg-white shadow-sm rounded-lg border overflow-x-auto">
                 <table className="w-full text-sm text-left">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-500 border-b">
                         <tr>

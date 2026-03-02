@@ -96,7 +96,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                 />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Kategori *</label>
                     <select
@@ -132,29 +132,29 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                 />
             </div>
 
-            <div className="flex space-x-6">
-                <label className="flex items-center space-x-2">
+            <div className="flex flex-col sm:flex-row sm:space-x-6 gap-4">
+                <label className="flex items-center space-x-2 cursor-pointer">
                     <input
                         name="isActive"
                         type="checkbox"
                         defaultChecked={initialData ? initialData.isActive : true}
-                        className="rounded border-gray-300 text-furniture-bronze focus:ring-furniture-bronze"
+                        className="h-4 w-4 rounded border-gray-300 text-furniture-bronze focus:ring-furniture-bronze"
                     />
                     <span className="text-sm font-medium text-gray-700">Aktif Mi?</span>
                 </label>
-                <label className="flex items-center space-x-2">
+                <label className="flex items-center space-x-2 cursor-pointer">
                     <input
                         name="isFeatured"
                         type="checkbox"
                         defaultChecked={initialData?.isFeatured}
-                        className="rounded border-gray-300 text-furniture-bronze focus:ring-furniture-bronze"
+                        className="h-4 w-4 rounded border-gray-300 text-furniture-bronze focus:ring-furniture-bronze"
                     />
                     <span className="text-sm font-medium text-gray-700">Öne Çıkan Ürün</span>
                 </label>
             </div>
 
-            <div className="pt-4 flex items-center space-x-4">
-                <Button type="submit" className="flex-1" disabled={isSubmitting}>
+            <div className="pt-4 flex flex-col sm:flex-row items-center gap-3">
+                <Button type="submit" className="w-full sm:flex-1" disabled={isSubmitting}>
                     {isSubmitting ? 'Kaydediliyor...' : (initialData ? 'Ürünü Güncelle' : 'Ürünü Kaydet')}
                 </Button>
                 {initialData && (
@@ -163,6 +163,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
                         variant="outline"
                         onClick={() => window.history.back()}
                         disabled={isSubmitting}
+                        className="w-full sm:w-auto"
                     >
                         Vazgeç
                     </Button>

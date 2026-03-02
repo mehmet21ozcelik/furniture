@@ -102,8 +102,8 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
                 </div>
             </div>
 
-            <div className="flex gap-3 pt-4">
-                <Button type="submit" className="flex-1" disabled={isLoading}>
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <Button type="submit" className="w-full sm:flex-1" disabled={isLoading}>
                     {isLoading ? "Kaydediliyor..." : initialData ? "Güncelle" : "Kategori Oluştur"}
                 </Button>
                 <Button
@@ -111,6 +111,7 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
                     variant="outline"
                     onClick={() => router.back()}
                     disabled={isLoading}
+                    className="w-full sm:w-auto"
                 >
                     İptal
                 </Button>
