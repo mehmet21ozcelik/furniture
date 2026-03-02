@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "Mobilya Vitrin",
     description: "Modern mobilya ürün kataloğu",
+    icons: {
+        icon: '/favicon.ico',
+    }
 };
 
 export default function RootLayout({
