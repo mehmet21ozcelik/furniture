@@ -24,8 +24,8 @@ export default async function AdminCategoriesPage() {
                 </Link>
             </div>
 
-            <div className="bg-white shadow-sm rounded-lg border overflow-x-auto">
-                <table className="w-full text-sm text-left">
+            <div className="bg-white shadow-sm rounded-lg border overflow-x-auto w-full max-w-full">
+                <table className="w-full text-sm text-left min-w-[700px]">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-500 border-b">
                         <tr>
                             <th className="px-6 py-3">Sıra</th>

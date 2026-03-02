@@ -39,16 +39,22 @@ export function AdminSidebar() {
 
             <aside
                 className={cn(
-                    "fixed left-0 top-0 z-40 h-screen border-r bg-slate-900 text-slate-50 transition-all duration-300",
+                    "fixed left-0 top-0 z-40 h-screen border-r bg-slate-900 text-slate-50 transition-all duration-300 ease-in-out",
                     "flex flex-col",
-                    isOpen ? "w-64 translate-x-0" : "w-0 -translate-x-full md:w-20 md:translate-x-0"
+                    isOpen
+                        ? "translate-x-0 w-64 shadow-2xl"
+                        : "-translate-x-full w-64 md:translate-x-0 md:w-20"
                 )}
             >
                 <div className="flex h-16 items-center justify-between border-b border-slate-700 px-4">
-                    {isOpen ? (
-                        <span className="font-bold text-lg tracking-wider">YÖNETİM</span>
-                    ) : (
-                        <span className="font-bold text-lg opacity-0 md:opacity-100">Y</span>
+                    <div className={cn(
+                        "font-bold text-lg tracking-wider transition-all duration-300",
+                        !isOpen && "md:opacity-0 md:w-0 overflow-hidden"
+                    )}>
+                        YÖNETİM
+                    </div>
+                    {!isOpen && (
+                        <div className="font-bold text-lg hidden md:block transition-all duration-300">Y</div>
                     )}
                     <button
                         onClick={() => setOpen(false)}
@@ -80,7 +86,14 @@ export function AdminSidebar() {
                                         title={!isOpen ? item.label : undefined}
                                     >
                                         <Icon className="h-5 w-5 flex-shrink-0" />
-                                        {(isOpen || window.innerWidth < 768) && <span className="ml-3">{item.label}</span>}
+                                        {(isOpen || (typeof window !== 'undefined' && window.innerWidth < 768)) && (
+                                            <span className={cn(
+                                                "ml-3 transition-opacity duration-300",
+                                                !isOpen && "md:opacity-0 md:hidden"
+                                            )}>
+                                                {item.label}
+                                            </span>
+                                        )}
                                     </Link>
                                 </li>
                             );
@@ -95,7 +108,14 @@ export function AdminSidebar() {
                         title={!isOpen ? "Çıkış Yap" : undefined}
                     >
                         <LogOut className="h-5 w-5 flex-shrink-0 text-red-500" />
-                        {(isOpen || window.innerWidth < 768) && <span className="ml-3">Çıkış Yap</span>}
+                        {(isOpen || (typeof window !== 'undefined' && window.innerWidth < 768)) && (
+                            <span className={cn(
+                                "ml-3 transition-opacity duration-300",
+                                !isOpen && "md:opacity-0 md:hidden"
+                            )}>
+                                Çıkış Yap
+                            </span>
+                        )}
                     </button>
                 </div>
             </aside>
