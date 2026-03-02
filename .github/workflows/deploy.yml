@@ -85,20 +85,23 @@ jobs:
             # Navigate to the project folder
             cd /home/mcp-admin/furniture
             
-            # Fetch the latest code and reset to match origin/main
-            # This ensures any manual hotfixes on the server are overwritten by the repo
+            # CRITICAL: Ensure we are on the correct branch and sync with origin
             git fetch origin main
             git reset --hard origin/main
-
+            git status
+            
             # Rebuild and start the app container
-            # Using --build to force fresh image creation with new code
-            docker compose up -d --build web
+            # Using --no-cache and --force-recreate to ensure stale artifacts are purged
+            docker compose build --no-cache web
+            docker compose up -d --force-recreate web
             
             # Sync database schema (using project's internal prisma)
             docker compose exec -T web npx prisma db push
             
-            # CRITICAL: Clean up Docker build cache to prevent disk bloat (The 34GB issue)
-            # This removes build cache that isn't used by the current active build
-            docker builder prune -af --filter "until=24h"
+            # CRITICAL: Clean up Docker build cache to maintain disk health
+            docker builder prune -af --filter "until=1h"
             
-            echo "Deployment successful and disk cleaned!"
+            # Optional: Clean up old unused images to free up space
+            docker image prune -f
+            
+            echo "Deployment successful: Image rebuilt without cache and container recreated!"
