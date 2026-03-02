@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, FolderTree, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, LogOut, Settings } from "lucide-react";
 import { useSidebarStore } from "@/lib/store/sidebar";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +10,7 @@ const menuItems = [
     { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/admin/products", icon: Package, label: "Ürünler" },
     { href: "/admin/categories", icon: FolderTree, label: "Kategoriler" },
+    { href: "/admin/settings", icon: Settings, label: "Ayarlar" },
 ];
 
 export function AdminSidebar() {

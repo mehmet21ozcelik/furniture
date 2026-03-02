@@ -4,9 +4,13 @@ import { prisma } from "@/lib/db";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { generateOrganizationSchema } from "@/lib/seo/jsonld";
 
+import { getSettingsAction } from "../(admin)/admin/settings/actions";
+
 export default async function HomePage() {
     let categories: any[] = [];
     let featuredProducts: any[] = [];
+    let settings = await getSettingsAction();
+
     try {
         [categories, featuredProducts] = await Promise.all([
             prisma.category.findMany({
@@ -44,19 +48,20 @@ export default async function HomePage() {
             <section className="relative h-[80vh] min-h-[600px] w-full bg-furniture-dark flex items-center justify-center">
                 <div className="absolute inset-0 overflow-hidden">
                     <Image
-                        src="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1920"
-                        alt="Modern Mobilya Koleksiyonu"
+                        src={settings.heroImage}
+                        alt={settings.heroTitle}
                         fill
                         className="object-cover opacity-60"
                         priority
+                        sizes="100vw"
                     />
                 </div>
                 <div className="relative z-10 container mx-auto px-4 text-center text-white">
                     <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 drop-shadow-md">
-                        Evinize Değer Katan Tasarımlar
+                        {settings.heroTitle}
                     </h1>
                     <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light drop-shadow">
-                        Modern, şık ve konforlu mobilyalar ile yaşam alanlarınızı yeniden keşfedin.
+                        {settings.heroSubtitle}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
