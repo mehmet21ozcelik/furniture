@@ -72,7 +72,7 @@ jobs:
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -82,21 +82,23 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            # Navigate to the project folder or clone it if it doesn't exist
-            if [ ! -d "furniture" ]; then
-              git clone https://github.com/mehmet21ozcelik/furniture.git
-              cd furniture
-            else
-              cd furniture
-              # Fetch and reset to avoid local conflict issues
-              git fetch origin main || git fetch origin master
-              git reset --hard origin/main || git reset --hard origin/master
-            fi
+            # Navigate to the project folder
+            cd /home/mcp-admin/furniture
+            
+            # Fetch the latest code and reset to match origin/main
+            # This ensures any manual hotfixes on the server are overwritten by the repo
+            git fetch origin main
+            git reset --hard origin/main
 
             # Rebuild and start the app container
+            # Using --build to force fresh image creation with new code
             docker compose up -d --build web
             
-            # Sync database schema
-            docker compose exec -T web npx prisma@5.10.0 db push
+            # Sync database schema (using project's internal prisma)
+            docker compose exec -T web npx prisma db push
             
-            echo "Deployment successful!"
+            # CRITICAL: Clean up Docker build cache to prevent disk bloat (The 34GB issue)
+            # This removes build cache that isn't used by the current active build
+            docker builder prune -af --filter "until=24h"
+            
+            echo "Deployment successful and disk cleaned!"
