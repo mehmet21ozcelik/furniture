@@ -5,12 +5,13 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
-export function formatPrice(price: number | null | undefined): string | null {
+export function formatPrice(price: any): string | null {
     if (price == null) return null;
+    const num = typeof price === 'object' && 'toNumber' in price ? price.toNumber() : Number(price);
     return new Intl.NumberFormat('tr-TR', {
         style: 'currency',
         currency: 'TRY',
-    }).format(price);
+    }).format(num);
 }
 
 export function slugify(text: string): string {

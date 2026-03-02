@@ -62,7 +62,12 @@ export default async function AdminProductsPage() {
                                     {product.createdAt.toLocaleDateString('tr-TR')}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <ProductDeleteButton id={product.id} />
+                                    <div className="flex items-center space-x-3">
+                                        <Link href={`/admin/products/${product.id}/edit`}>
+                                            <Button variant="outline" size="sm">Düzenle</Button>
+                                        </Link>
+                                        <ProductDeleteButton id={product.id} />
+                                    </div>
                                 </td>
                             </tr>
                         ))}
