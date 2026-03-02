@@ -2,7 +2,7 @@
 
 import { useSidebarStore } from "@/lib/store/sidebar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AdminLayout({
@@ -26,12 +26,17 @@ export default function AdminLayout({
                     <button
                         onClick={toggle}
                         className={cn(
-                            "flex h-10 w-10 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-furniture-bronze transition-opacity",
-                            isOpen && "opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
+                            "flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition-all duration-300",
+                            "hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-furniture-bronze/20",
+                            "md:border-none md:shadow-none md:bg-transparent md:text-slate-500 md:hover:bg-slate-100"
                         )}
                     >
                         <span className="sr-only">Toggle sidebar</span>
-                        <Menu className="h-6 w-6" aria-hidden="true" />
+                        {isOpen ? (
+                            <X className="h-6 w-6 text-furniture-bronze" aria-hidden="true" />
+                        ) : (
+                            <Menu className="h-6 w-6" aria-hidden="true" />
+                        )}
                     </button>
 
                     <div className="flex flex-1 justify-end">

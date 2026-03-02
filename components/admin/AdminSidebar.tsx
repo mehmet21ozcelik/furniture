@@ -32,15 +32,16 @@ export function AdminSidebar() {
             {/* Overlay for mobile */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 z-30 bg-slate-900/50 backdrop-blur-sm transition-opacity md:hidden"
+                    className="fixed inset-0 top-16 z-30 bg-slate-900/40 backdrop-blur-[2px] transition-opacity md:hidden"
                     onClick={() => setOpen(false)}
                 />
             )}
 
             <aside
                 className={cn(
-                    "fixed left-0 top-0 z-40 h-screen border-r bg-slate-900 text-slate-50 transition-all duration-300 ease-in-out",
+                    "fixed left-0 z-40 border-r bg-slate-900 text-slate-50 transition-all duration-300 ease-in-out",
                     "flex flex-col",
+                    "top-16 h-[calc(100vh-64px)] md:top-0 md:h-screen",
                     isOpen
                         ? "translate-x-0 w-64 shadow-2xl"
                         : "-translate-x-full w-64 md:translate-x-0 md:w-20"
@@ -56,12 +57,6 @@ export function AdminSidebar() {
                     {!isOpen && (
                         <div className="font-bold text-lg hidden md:block transition-all duration-300">Y</div>
                     )}
-                    <button
-                        onClick={() => setOpen(false)}
-                        className="rounded-md p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white md:hidden"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto py-4 overflow-x-hidden">
