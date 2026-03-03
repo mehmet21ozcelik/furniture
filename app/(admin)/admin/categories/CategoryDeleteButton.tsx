@@ -17,13 +17,13 @@ export function CategoryDeleteButton({ id }: CategoryDeleteButtonProps) {
         if (!confirm("Bu kategoriyi silmek istediğinize emin misiniz?")) return;
 
         setIsLoading(true);
-        const result = await deleteCategoryAction(id);
+        const result = await deleteCategoryAction({ id });
         setIsLoading(false);
 
-        if (result.success) {
+        if (result?.data?.success) {
             router.refresh();
         } else {
-            alert(result.error || "Bir hata oluştu");
+            alert(result?.data?.error || result?.serverError || "Bir hata oluştu");
         }
     };
 

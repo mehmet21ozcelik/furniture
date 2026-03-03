@@ -10,9 +10,9 @@ export function ProductDeleteButton({ id }: { id: string }) {
     const handleDelete = () => {
         if (confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
             startTransition(async () => {
-                const res = await deleteProductAction(id);
-                if (!res.success) {
-                    alert(res.error);
+                const res = await deleteProductAction({ id });
+                if (!res?.data?.success) {
+                    alert(res?.data?.error || res?.serverError || "Bir hata oluştu");
                 }
             });
         }

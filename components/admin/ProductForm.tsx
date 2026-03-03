@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/Button";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { createProductAction, updateProductAction } from "@/app/(admin)/admin/products/actions";
+import { useRouter } from "next/navigation";
 
 interface Category {
     id: string;
@@ -29,6 +30,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
     const [images, setImages] = useState<string[]>(initialData?.images || []);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     const handleUploadComplete = (url: string) => {
         setImages((prev) => [...prev, url]);
@@ -38,15 +40,47 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
         setImages((prev) => prev.filter((u) => u !== url));
     };
 
-    const action = initialData ? updateProductAction.bind(null, initialData.id) : createProductAction;
-
     return (
         <form
             action={async (formData) => {
                 setIsSubmitting(true);
                 setError(null);
                 try {
-                    await action(formData);
+                    const priceRaw = formData.get('price');
+                    let price: number | "" = "";
+                    if (priceRaw) {
+                        price = Number(priceRaw);
+                    }
+
+                    const data = {
+                        name: formData.get('name') as string,
+                        shortDescription: formData.get('shortDescription') as string,
+                        description: formData.get('description') as string,
+                        categoryId: formData.get('categoryId') as string,
+                        price: price,
+                        images: images,
+                        isActive: formData.get('isActive') === 'on',
+                        isFeatured: formData.get('isFeatured') === 'on',
+                    };
+
+                    let result;
+                    if (initialData) {
+                        result = await updateProductAction({ ...data, id: initialData.id });
+                    } else {
+                        result = await createProductAction(data);
+                    }
+
+                    if (result?.data?.success) {
+                        router.push('/admin/products');
+                        router.refresh();
+                    } else if (result?.data?.error) {
+                        setError(result.data.error);
+                    } else if (result?.serverError) {
+                        setError(result.serverError);
+                    } else {
+                        setError("Bir hata oluştu");
+                    }
+
                 } catch (err: any) {
                     setError(err.message || "Bir hata oluştu.");
                 } finally {

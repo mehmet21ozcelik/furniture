@@ -2,8 +2,9 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { ProductCard } from '@/components/ui/ProductCard';
 import { constructMetadata } from '@/lib/seo/metadata';
+import { getCategoryBySlug } from '@/lib/services/category.service';
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
     try {
@@ -29,18 +30,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function CategoryPage({ params }: { params: { slug: string } }) {
-    const category = await prisma.category.findUnique({
-        where: { slug: params.slug },
-        include: {
-            products: {
-                where: { isActive: true },
-                orderBy: { createdAt: 'desc' },
-                include: {
-                    category: { select: { name: true } },
-                }
-            },
-        },
-    });
+    const category = await getCategoryBySlug(params.slug);
 
     if (!category) {
         notFound();

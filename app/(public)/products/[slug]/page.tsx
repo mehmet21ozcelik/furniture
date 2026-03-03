@@ -4,8 +4,9 @@ import { prisma } from '@/lib/db';
 import { formatPrice } from '@/lib/utils';
 import { constructMetadata } from '@/lib/seo/metadata';
 import { generateProductSchema, generateBreadcrumbSchema } from '@/lib/seo/jsonld';
+import sanitizeHtml from 'sanitize-html';
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
     try {
@@ -123,7 +124,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                         </p>
                     )}
 
-                    <div className="prose prose-sm sm:prose-base text-gray-600 mb-8" dangerouslySetInnerHTML={{ __html: product.description }} />
+                    <div className="prose prose-sm sm:prose-base text-gray-600 mb-8" dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }} />
 
                     <div className="mt-auto pt-6 border-t">
                         <a

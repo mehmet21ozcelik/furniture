@@ -1,130 +1,100 @@
 'use server';
 
 import { prisma } from "@/lib/db";
-import { slugify } from "@/lib/utils";
+import { generateUniqueSlug } from "@/lib/services/slug.service";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
-export async function createProductAction(formData: FormData) {
-    try {
-        const name = formData.get('name') as string;
-        const shortDescription = formData.get('shortDescription') as string | null;
-        const description = formData.get('description') as string;
-        const categoryId = formData.get('categoryId') as string;
-        const priceStr = formData.get('price') as string;
-        const price = priceStr ? parseFloat(priceStr) : null;
-        const isActive = formData.get('isActive') === 'on';
-        const isFeatured = formData.get('isFeatured') === 'on';
-        const imagesStr = formData.get('images') as string;
-        const images = imagesStr
-            ? imagesStr.split(',')
-                .map(s => s.trim())
-                .filter(s => s.startsWith('/') || s.startsWith('http'))
-            : [];
+import { actionClient } from "@/lib/safe-action";
+import { productSchema } from "@/lib/validations/product";
+import { z } from "zod";
 
-        if (!name || !description || !categoryId) {
-            throw new Error("Gerekli alanları doldurun.");
+export const createProductAction = actionClient
+    .schema(productSchema)
+    .action(async ({ parsedInput }) => {
+        try {
+            const { name, shortDescription, description, categoryId, price, isActive, isFeatured, images } = parsedInput;
+
+            const slug = await generateUniqueSlug(name, 'product');
+
+            await prisma.product.create({
+                data: {
+                    name,
+                    slug,
+                    shortDescription: shortDescription || null,
+                    description,
+                    categoryId,
+                    price: price === '' ? null : Number(price),
+                    isActive,
+                    isFeatured,
+                    images
+                }
+            });
+
+            revalidatePath('/admin/products');
+            revalidatePath('/products');
+
+            return { success: true };
+        } catch (e: any) {
+            return { success: false, error: e.message || "Bir hata oluştu" };
         }
+    });
 
-        let slug = slugify(name);
-        // check unique slug
-        let count = 1;
-        while (await prisma.product.findUnique({ where: { slug } })) {
-            slug = `${slugify(name)}-${count}`;
-            count++;
-        }
+const updateProductSchema = productSchema.extend({
+    id: z.string().cuid(),
+});
 
-        const product = await prisma.product.create({
-            data: {
-                name,
-                slug,
-                shortDescription,
-                description,
-                categoryId,
-                price,
-                isActive,
-                isFeatured,
-                images
+export const updateProductAction = actionClient
+    .schema(updateProductSchema)
+    .action(async ({ parsedInput }) => {
+        try {
+            const { id, name, shortDescription, description, categoryId, price, isActive, isFeatured, images } = parsedInput;
+
+            const existingProduct = await prisma.product.findUnique({ where: { id } });
+            if (!existingProduct) return { success: false, error: "Ürün bulunamadı." };
+
+            let slug = existingProduct.slug;
+            if (existingProduct.name !== name) {
+                slug = await generateUniqueSlug(name, 'product', id);
             }
-        });
 
-        revalidatePath('/admin/products');
-        revalidatePath('/products');
+            await prisma.product.update({
+                where: { id },
+                data: {
+                    name,
+                    slug,
+                    shortDescription: shortDescription || null,
+                    description,
+                    categoryId,
+                    price: price === '' ? null : Number(price),
+                    isActive,
+                    isFeatured,
+                    images
+                }
+            });
 
-    } catch (e: any) {
-        throw new Error(e.message || "Bir hata oluştu");
-    }
+            revalidatePath('/admin/products');
+            revalidatePath(`/products/${slug}`);
+            revalidatePath('/products');
 
-    redirect('/admin/products');
-}
-
-export async function updateProductAction(id: string, formData: FormData) {
-    try {
-        const name = formData.get('name') as string;
-        const shortDescription = formData.get('shortDescription') as string | null;
-        const description = formData.get('description') as string;
-        const categoryId = formData.get('categoryId') as string;
-        const priceStr = formData.get('price') as string;
-        const price = priceStr ? parseFloat(priceStr) : null;
-        const isActive = formData.get('isActive') === 'on';
-        const isFeatured = formData.get('isFeatured') === 'on';
-        const imagesStr = formData.get('images') as string;
-        const images = imagesStr
-            ? imagesStr.split(',')
-                .map(s => s.trim())
-                .filter(s => s.startsWith('/') || s.startsWith('http'))
-            : [];
-
-        if (!name || !description || !categoryId) {
-            throw new Error("Gerekli alanları doldurun.");
+            return { success: true };
+        } catch (e: any) {
+            return { success: false, error: e.message || "Güncelleme sırasında bir hata oluştu" };
         }
+    });
 
-        const existingProduct = await prisma.product.findUnique({ where: { id } });
-        if (!existingProduct) throw new Error("Ürün bulunamadı.");
+const deleteProductSchema = z.object({
+    id: z.string().cuid(),
+});
 
-        let slug = existingProduct.slug;
-        if (existingProduct.name !== name) {
-            slug = slugify(name);
-            let count = 1;
-            while (await prisma.product.findFirst({ where: { slug, id: { not: id } } })) {
-                slug = `${slugify(name)}-${count}`;
-                count++;
-            }
+export const deleteProductAction = actionClient
+    .schema(deleteProductSchema)
+    .action(async ({ parsedInput }) => {
+        try {
+            await prisma.product.delete({ where: { id: parsedInput.id } });
+            revalidatePath('/admin/products');
+            revalidatePath('/products');
+            return { success: true };
+        } catch (e) {
+            return { success: false, error: "Silme işlemi başarısız" };
         }
-
-        await prisma.product.update({
-            where: { id },
-            data: {
-                name,
-                slug,
-                shortDescription,
-                description,
-                categoryId,
-                price,
-                isActive,
-                isFeatured,
-                images
-            }
-        });
-
-        revalidatePath('/admin/products');
-        revalidatePath(`/products/${slug}`);
-        revalidatePath('/products');
-
-    } catch (e: any) {
-        throw new Error(e.message || "Güncelleme sırasında bir hata oluştu");
-    }
-
-    redirect('/admin/products');
-}
-
-export async function deleteProductAction(id: string) {
-    try {
-        await prisma.product.delete({ where: { id } });
-        revalidatePath('/admin/products');
-        revalidatePath('/products');
-        return { success: true };
-    } catch (e) {
-        return { success: false, error: "Silme işlemi başarısız" };
-    }
-}
+    });

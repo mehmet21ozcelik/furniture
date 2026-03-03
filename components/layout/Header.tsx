@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/lib/seo/metadata";
+import { MobileMenu } from "@/components/layout/MobileMenu";
 
 export default function Header() {
     return (
@@ -26,7 +26,7 @@ export default function Header() {
                             İletişim
                         </Link>
                     </nav>
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center gap-4">
                         <a
                             href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP}`}
                             target="_blank"
@@ -35,7 +35,7 @@ export default function Header() {
                         >
                             WhatsApp
                         </a>
-                        {/* Mobile menu button could be added here later */}
+                        <MobileMenu />
                     </div>
                 </div>
             </div>

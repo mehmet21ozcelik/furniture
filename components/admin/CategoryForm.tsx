@@ -29,21 +29,31 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
         setError("");
 
         const formData = new FormData(e.currentTarget);
-        if (image) {
-            formData.set('image', image);
-        }
+        const data = {
+            name: formData.get('name') as string,
+            description: formData.get('description') as string,
+            order: Number(formData.get('order')) || 0,
+            image: image || undefined,
+        };
 
-        const result = initialData
-            ? await updateCategoryAction(initialData.id, formData)
-            : await createCategoryAction(formData);
+        let result;
+        if (initialData) {
+            result = await updateCategoryAction({ ...data, id: initialData.id });
+        } else {
+            result = await createCategoryAction(data);
+        }
 
         setIsLoading(false);
 
-        if (result.success) {
+        if (result?.data?.success) {
             router.push("/admin/categories");
             router.refresh();
+        } else if (result?.data?.error) {
+            setError(result.data.error);
+        } else if (result?.serverError) {
+            setError(result.serverError);
         } else {
-            setError(result.error || "Bir hata oluştu");
+            setError("Bir hata oluştu");
         }
     };
 

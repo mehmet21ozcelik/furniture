@@ -1,34 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
-import { prisma } from "@/lib/db";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { generateOrganizationSchema } from "@/lib/seo/jsonld";
 
-import { getSettingsAction } from "../(admin)/admin/settings/actions";
+import { getCategories } from "@/lib/services/category.service";
+import { getFeaturedProducts } from "@/lib/services/product.service";
+import { getSiteSettings } from "@/lib/services/settings.service";
 
 export default async function HomePage() {
     let categories: any[] = [];
     let featuredProducts: any[] = [];
-    let settings = await getSettingsAction();
+    let settings = await getSiteSettings();
 
     try {
         [categories, featuredProducts] = await Promise.all([
-            prisma.category.findMany({
-                orderBy: { order: "asc" },
-                take: 4,
-            }),
-            prisma.product.findMany({
-                where: {
-                    isFeatured: true,
-                    isActive: true,
-                },
-                include: {
-                    category: {
-                        select: { name: true },
-                    },
-                },
-                take: 4,
-            }),
+            getCategories(),
+            getFeaturedProducts(),
         ]);
     } catch (error) {
         console.warn("Database connection skipped during build");
@@ -57,10 +44,10 @@ export default async function HomePage() {
                     />
                 </div>
                 <div className="relative z-10 container mx-auto px-4 text-center text-white">
-                    <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 drop-shadow-md">
+                    <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 drop-shadow-xl shadow-black">
                         {settings.heroTitle}
                     </h1>
-                    <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light drop-shadow">
+                    <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light drop-shadow-lg shadow-black/80">
                         {settings.heroSubtitle}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -97,7 +84,7 @@ export default async function HomePage() {
                             >
                                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors z-10" />
                                 <div className="absolute inset-0 flex items-center justify-center z-20">
-                                    <h3 className="font-serif text-2xl font-semibold text-white tracking-wider">
+                                    <h3 className="font-serif text-2xl font-semibold text-white tracking-wider drop-shadow-md">
                                         {category.name}
                                     </h3>
                                 </div>

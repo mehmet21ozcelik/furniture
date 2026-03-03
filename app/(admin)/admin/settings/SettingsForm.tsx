@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { updateSettingsAction, SiteSettings } from "./actions";
+import { updateSettingsAction } from "./actions";
+import { SiteSettingsInput } from "@/lib/validations/settings";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { useRouter } from "next/navigation";
 
 interface SettingsFormProps {
-    initialSettings: SiteSettings;
+    initialSettings: SiteSettingsInput;
 }
 
 export function SettingsForm({ initialSettings }: SettingsFormProps) {
@@ -23,7 +24,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         setMessage(null);
 
         const formData = new FormData(e.currentTarget);
-        const data: SiteSettings = {
+        const data: SiteSettingsInput = {
             companyName: formData.get('companyName') as string,
             phone: formData.get('phone') as string,
             email: formData.get('email') as string,
@@ -39,11 +40,11 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         const result = await updateSettingsAction(data);
         setIsLoading(false);
 
-        if (result.success) {
+        if (result?.data?.success) {
             setMessage({ type: 'success', text: 'Ayarlar başarıyla kaydedildi.' });
             router.refresh();
         } else {
-            setMessage({ type: 'error', text: result.error || 'Bir hata oluştu.' });
+            setMessage({ type: 'error', text: result?.data?.error || 'Bir hata oluştu.' });
         }
     };
 

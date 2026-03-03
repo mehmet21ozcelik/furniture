@@ -36,6 +36,12 @@ export function ImageUploadField({
 
         try {
             for (const file of Array.from(files)) {
+                // Front-end validasyonu (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    setError(`Dosya çok büyük: ${file.name}. Maksimum 5MB olmalı.`);
+                    continue;
+                }
+
                 const formData = new FormData();
                 formData.append('file', file);
 
@@ -53,6 +59,7 @@ export function ImageUploadField({
                 }
             }
         } catch (err) {
+            console.error("Yükleme hatası:", err);
             setError('Bir bağlantı hatası oluştu.');
         } finally {
             setIsUploading(false);
@@ -104,7 +111,7 @@ export function ImageUploadField({
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept="image/*"
+                accept="image/jpeg, image/png, image/webp"
                 multiple
                 className="hidden"
             />
@@ -114,7 +121,7 @@ export function ImageUploadField({
             )}
 
             <p className="text-[10px] text-gray-400">
-                * Max {maxFiles} resim (WebP formatına otomatik dönüştürülür).
+                * Max {maxFiles} resim (Max 5MB/resim). WebP formatına otomatik dönüştürülür.
             </p>
         </div>
     );
