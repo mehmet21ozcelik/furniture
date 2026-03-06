@@ -5,7 +5,7 @@ export const productSchema = z.object({
     shortDescription: z.string().optional(),
     description: z.string().min(10, 'Açıklama çok kısa'),
     price: z.coerce.number().positive().optional().or(z.literal('')),
-    images: z.array(z.string().url()).min(1, 'En az bir görsel eklemelisiniz'),
+    images: z.array(z.string()).min(1, 'En az bir görsel eklemelisiniz'),
     categoryId: z.string().uuid().or(z.string().cuid()),
     isFeatured: z.boolean().default(false),
     isActive: z.boolean().default(true),
