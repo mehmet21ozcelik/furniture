@@ -40,8 +40,9 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/furniture?schema=public
       - JWT_SECRET=${JWT_SECRET:-super_secret_jwt_key_here_for_development}
-      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://187.124.15.224:3001}
       - NEXT_PUBLIC_WHATSAPP=${NEXT_PUBLIC_WHATSAPP:-905551234567}
+      - HOSTNAME=0.0.0.0
     volumes:
       - product-uploads:/app/public/uploads
     depends_on:
