@@ -82,7 +82,16 @@ export default async function HomePage() {
                                 key={category.id}
                                 className="group relative h-64 overflow-hidden rounded-lg bg-gray-200"
                             >
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors z-10" />
+                                <div className="absolute inset-0 z-0">
+                                    <Image
+                                        src={category.image || "/placeholder-category.jpg"}
+                                        alt={category.name}
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                    />
+                                </div>
+                                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors z-10" />
                                 <div className="absolute inset-0 flex items-center justify-center z-20">
                                     <h3 className="font-serif text-2xl font-semibold text-white tracking-wider drop-shadow-md">
                                         {category.name}

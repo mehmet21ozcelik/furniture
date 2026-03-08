@@ -5,6 +5,7 @@ import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { ProductDeleteButton } from "./ProductDeleteButton";
+import Image from "next/image";
 
 export default async function AdminProductsPage() {
     const products = await prisma.product.findMany({
@@ -29,6 +30,7 @@ export default async function AdminProductsPage() {
                 <table className="w-full text-sm text-left min-w-[700px]">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-500 border-b">
                         <tr>
+                            <th className="px-6 py-3">Görsel</th>
                             <th className="px-6 py-3">Ürün Adı</th>
                             <th className="px-6 py-3">Kategori</th>
                             <th className="px-6 py-3">Fiyat</th>
@@ -40,6 +42,17 @@ export default async function AdminProductsPage() {
                     <tbody className="divide-y divide-gray-200">
                         {products.map((product) => (
                             <tr key={product.id} className="hover:bg-gray-50">
+                                <td className="px-6 py-4">
+                                    <div className="relative h-10 w-10 overflow-hidden rounded border bg-gray-50">
+                                        <Image
+                                            src={product.images[0] || "/placeholder.jpg"}
+                                            alt={product.name}
+                                            fill
+                                            className="object-cover"
+                                            sizes="40px"
+                                        />
+                                    </div>
+                                </td>
                                 <td className="px-6 py-4 font-medium text-gray-900">
                                     {product.name}
                                     {product.isFeatured && (

@@ -40,55 +40,59 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
         setImages((prev) => prev.filter((u) => u !== url));
     };
 
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            const formData = new FormData(e.currentTarget);
+            const priceRaw = formData.get('price');
+            let price: number | "" = "";
+            if (priceRaw && priceRaw !== "") {
+                price = Number(priceRaw);
+            }
+
+            const data = {
+                name: formData.get('name') as string,
+                shortDescription: formData.get('shortDescription') as string,
+                description: formData.get('description') as string,
+                categoryId: formData.get('categoryId') as string,
+                price: price,
+                images: images,
+                isActive: formData.get('isActive') === 'on',
+                isFeatured: formData.get('isFeatured') === 'on',
+            };
+
+            console.log("Submitting Product Data:", data);
+
+            let result;
+            if (initialData) {
+                result = await updateProductAction({ ...data, id: initialData.id });
+            } else {
+                result = await createProductAction(data);
+            }
+
+            if (result?.data?.success) {
+                router.push('/admin/products');
+                router.refresh();
+            } else if (result?.data?.error) {
+                setError(result.data.error);
+            } else if (result?.serverError) {
+                setError(result.serverError);
+            } else {
+                setError("Bir hata oluştu");
+            }
+        } catch (err: any) {
+            console.error("Form Submission Error:", err);
+            setError(err.message || "Bir hata oluştu.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
-        <form
-            action={async (formData) => {
-                setIsSubmitting(true);
-                setError(null);
-                try {
-                    const priceRaw = formData.get('price');
-                    let price: number | "" = "";
-                    if (priceRaw) {
-                        price = Number(priceRaw);
-                    }
-
-                    const data = {
-                        name: formData.get('name') as string,
-                        shortDescription: formData.get('shortDescription') as string,
-                        description: formData.get('description') as string,
-                        categoryId: formData.get('categoryId') as string,
-                        price: price,
-                        images: images,
-                        isActive: formData.get('isActive') === 'on',
-                        isFeatured: formData.get('isFeatured') === 'on',
-                    };
-
-                    let result;
-                    if (initialData) {
-                        result = await updateProductAction({ ...data, id: initialData.id });
-                    } else {
-                        result = await createProductAction(data);
-                    }
-
-                    if (result?.data?.success) {
-                        router.push('/admin/products');
-                        router.refresh();
-                    } else if (result?.data?.error) {
-                        setError(result.data.error);
-                    } else if (result?.serverError) {
-                        setError(result.serverError);
-                    } else {
-                        setError("Bir hata oluştu");
-                    }
-
-                } catch (err: any) {
-                    setError(err.message || "Bir hata oluştu.");
-                } finally {
-                    setIsSubmitting(false);
-                }
-            }}
-            className="space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
                 <div className="p-4 rounded-md bg-red-50 border border-red-200 text-sm text-red-600">
                     {error}

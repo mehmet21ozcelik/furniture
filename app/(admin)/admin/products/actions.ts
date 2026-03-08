@@ -32,6 +32,7 @@ export const createProductAction = actionClient
 
             revalidatePath('/admin/products');
             revalidatePath('/products');
+            revalidatePath('/');
 
             return { success: true };
         } catch (e: any) {
@@ -75,6 +76,7 @@ export const updateProductAction = actionClient
             revalidatePath('/admin/products');
             revalidatePath(`/products/${slug}`);
             revalidatePath('/products');
+            revalidatePath('/');
 
             return { success: true };
         } catch (e: any) {

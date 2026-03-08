@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { CategoryDeleteButton } from "./CategoryDeleteButton";
+import Image from "next/image";
 
 export default async function AdminCategoriesPage() {
     const categories = await prisma.category.findMany({
@@ -29,6 +30,7 @@ export default async function AdminCategoriesPage() {
                     <thead className="bg-gray-50 text-xs uppercase text-gray-500 border-b">
                         <tr>
                             <th className="px-6 py-3">Sıra</th>
+                            <th className="px-6 py-3">Görsel</th>
                             <th className="px-6 py-3">Kategori Adı</th>
                             <th className="px-6 py-3">Ürün Sayısı</th>
                             <th className="px-6 py-3">Oluşturma Tarihi</th>
@@ -39,6 +41,17 @@ export default async function AdminCategoriesPage() {
                         {categories.map((category) => (
                             <tr key={category.id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4 text-gray-500">{category.order}</td>
+                                <td className="px-6 py-4">
+                                    <div className="relative h-10 w-10 overflow-hidden rounded border bg-gray-50">
+                                        <Image
+                                            src={category.image || "/placeholder.jpg"}
+                                            alt={category.name}
+                                            fill
+                                            className="object-cover"
+                                            sizes="40px"
+                                        />
+                                    </div>
+                                </td>
                                 <td className="px-6 py-4 font-medium text-gray-900">
                                     {category.name}
                                 </td>

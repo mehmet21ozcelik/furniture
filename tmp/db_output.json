@@ -1,0 +1,137 @@
+﻿[
+  {
+    "id": "cmmib8our0001w6wvktzcjkyl",
+    "name": "Banana Luxury Sofa",
+    "slug": "banana-luxury-sofa",
+    "shortDescription": "A premium sofa made of bananas",
+    "description": "This is a detailed description of the banana sofa. It is very comfortable and stylish.",
+    "price": "1500",
+    "images": [
+      "/uploads/products/88fc71b2-e7aa-4229-9725-663c2ca7a8d4.webp",
+      "/uploads/products/e8cc6f6b-b48d-4164-97e9-52b61ef111d3.webp",
+      "/uploads/products/a714e97e-a7c3-435d-a0f5-ba28657bdf23.webp"
+    ],
+    "categoryId": "cmm7rl5ri0005vyvwpx5znjv2",
+    "isFeatured": false,
+    "isActive": true,
+    "metaTitle": null,
+    "metaDescription": null,
+    "createdAt": "2026-03-08T22:14:53.906Z",
+    "updatedAt": "2026-03-08T22:14:53.906Z",
+    "category": {
+      "id": "cmm7rl5ri0005vyvwpx5znjv2",
+      "name": "Aksesuar",
+      "slug": "aksesuar",
+      "description": "Ev dekorasyonu i├ğin aksesuarlar",
+      "image": null,
+      "order": 4,
+      "createdAt": "2026-03-01T13:07:01.615Z"
+    }
+  },
+  {
+    "id": "cmme5s6160001ce4tkcs16cwp",
+    "name": "Test Fix Product",
+    "slug": "test-fix-product",
+    "shortDescription": "Bu bir test ├╝r├╝n├╝d├╝r.",
+    "description": "Test Fix Product a├ğ─▒klamas─▒ burada yer almaktad─▒r. En az on karakter olmal─▒d─▒r.",
+    "price": "1500",
+    "images": [
+      "/uploads/products/504eefae-6eae-41d6-84aa-a17e68a910c1.webp"
+    ],
+    "categoryId": "cmm7rl5qr0001vyvwp4lcsaw2",
+    "isFeatured": false,
+    "isActive": true,
+    "metaTitle": null,
+    "metaDescription": null,
+    "createdAt": "2026-03-06T00:31:00.230Z",
+    "updatedAt": "2026-03-06T00:31:00.230Z",
+    "category": {
+      "id": "cmm7rl5qr0001vyvwp4lcsaw2",
+      "name": "Oturma Odas─▒",
+      "slug": "oturma-odasi",
+      "description": "Modern ve ┼ş─▒k oturma gruplar─▒",
+      "image": null,
+      "order": 0,
+      "createdAt": "2026-03-01T13:07:01.587Z"
+    }
+  },
+  {
+    "id": "cmm7rl5si000bvyvw0u5ftf9h",
+    "name": "Ceviz Masif Karyola (GUNCELLENDI)",
+    "slug": "ceviz-masif-karyola-guncellendi",
+    "shortDescription": "100% ceviz agacindan uretilmis karyola.",
+    "description": "<p>Dogalligi yatak odaniza tasiyin. 160x200cm yataklar ile uyumludur.</p>",
+    "price": null,
+    "images": [],
+    "categoryId": "cmm7rl5r20002vyvwp6qi9ou2",
+    "isFeatured": true,
+    "isActive": true,
+    "metaTitle": null,
+    "metaDescription": null,
+    "createdAt": "2026-03-01T13:07:01.650Z",
+    "updatedAt": "2026-03-02T02:48:09.631Z",
+    "category": {
+      "id": "cmm7rl5r20002vyvwp6qi9ou2",
+      "name": "Yatak Odas─▒",
+      "slug": "yatak-odasi",
+      "description": "Konforlu yatak odas─▒ tak─▒mlar─▒",
+      "image": null,
+      "order": 1,
+      "createdAt": "2026-03-01T13:07:01.598Z"
+    }
+  },
+  {
+    "id": "cmm7rl5sc0009vyvwcorzkfge",
+    "name": "Modern K├Â┼şe Tak─▒m─▒",
+    "slug": "modern-kose-takimi",
+    "shortDescription": "Minimalist tasarim, konforlu kose takimi.",
+    "description": "<p>Dar alanlari degerlendirmek icin m├╝kemmel secim.</p>",
+    "price": "18000",
+    "images": [
+      "https://images.pexels.com/photos/276583/pexels-photo-276583.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    "categoryId": "cmm7rl5qr0001vyvwp4lcsaw2",
+    "isFeatured": false,
+    "isActive": true,
+    "metaTitle": null,
+    "metaDescription": null,
+    "createdAt": "2026-03-01T13:07:01.644Z",
+    "updatedAt": "2026-03-01T13:07:01.644Z",
+    "category": {
+      "id": "cmm7rl5qr0001vyvwp4lcsaw2",
+      "name": "Oturma Odas─▒",
+      "slug": "oturma-odasi",
+      "description": "Modern ve ┼ş─▒k oturma gruplar─▒",
+      "image": null,
+      "order": 0,
+      "createdAt": "2026-03-01T13:07:01.587Z"
+    }
+  },
+  {
+    "id": "cmm7rl5rq0007vyvwi9hs36md",
+    "name": "L├╝x Chester Koltuk",
+    "slug": "lux-chester-koltuk",
+    "shortDescription": "Hakiki deri kaplama, el isciligi chester koltuk.",
+    "description": "<p>Evinde klasikten vazgecmeyenler icin ozel olarak uretildi. Hakiki deri kaplama...</p>",
+    "price": "25000",
+    "images": [
+      "https://images.pexels.com/photos/1866149/pexels-photo-1866149.jpeg?auto=compress&cs=tinysrgb&w=800"
+    ],
+    "categoryId": "cmm7rl5qr0001vyvwp4lcsaw2",
+    "isFeatured": true,
+    "isActive": true,
+    "metaTitle": null,
+    "metaDescription": null,
+    "createdAt": "2026-03-01T13:07:01.621Z",
+    "updatedAt": "2026-03-01T13:07:01.621Z",
+    "category": {
+      "id": "cmm7rl5qr0001vyvwp4lcsaw2",
+      "name": "Oturma Odas─▒",
+      "slug": "oturma-odasi",
+      "description": "Modern ve ┼ş─▒k oturma gruplar─▒",
+      "image": null,
+      "order": 0,
+      "createdAt": "2026-03-01T13:07:01.587Z"
+    }
+  }
+]
