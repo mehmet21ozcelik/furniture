@@ -96,7 +96,8 @@ jobs:
             docker compose up -d --force-recreate web
             
             # Sync database schema (using project's internal prisma)
-            docker compose exec -T web npx prisma db push
+            # Added --accept-data-loss to ensure schema changes are applied automatically
+            docker compose exec -T web npx prisma db push --accept-data-loss
             
             # Target only this project's old unused images to free space without affecting others
             docker image prune -f --filter "label=project=furniture"
