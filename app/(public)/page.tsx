@@ -7,6 +7,8 @@ import { getCategories } from "@/lib/services/category.service";
 import { getFeaturedProducts } from "@/lib/services/product.service";
 import { getSiteSettings } from "@/lib/services/settings.service";
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
     let categories: any[] = [];
     let featuredProducts: any[] = [];

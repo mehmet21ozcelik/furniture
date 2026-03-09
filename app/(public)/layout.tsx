@@ -28,6 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
     };
 }
 
+export const dynamic = 'force-dynamic';
+
 export default function PublicLayout({
     children,
 }: Readonly<{
