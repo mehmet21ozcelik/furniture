@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/seo/metadata";
 import { MobileMenu } from "@/components/layout/MobileMenu";
+import { getSiteSettings } from "@/lib/services/settings.service";
 
-export default function Header() {
+export default async function Header() {
+    const settings = await getSiteSettings();
+
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                     <div className="flex items-center">
                         <Link href="/" className="font-serif text-2xl font-bold text-furniture-dark">
-                            {siteConfig.name}
+                            {settings.companyName || siteConfig.name}
                         </Link>
                     </div>
                     <nav className="hidden md:flex flex-1 justify-center space-x-8 text-sm font-medium">
@@ -27,14 +30,16 @@ export default function Header() {
                         </Link>
                     </nav>
                     <div className="flex items-center gap-4">
-                        <a
-                            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hidden md:inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-green-600 text-white hover:bg-green-700 h-9 px-4 py-2"
-                        >
-                            WhatsApp
-                        </a>
+                        {settings.whatsapp && (
+                            <a
+                                href={`https://wa.me/${settings.whatsapp}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hidden md:inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-green-600 text-white hover:bg-green-700 h-9 px-4 py-2"
+                            >
+                                WhatsApp
+                            </a>
+                        )}
                         <MobileMenu />
                     </div>
                 </div>

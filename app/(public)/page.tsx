@@ -21,7 +21,7 @@ export default async function HomePage() {
         console.warn("Database connection skipped during build");
     }
 
-    const jsonLd = generateOrganizationSchema();
+    const jsonLd = generateOrganizationSchema(settings);
 
     return (
         <>

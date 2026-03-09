@@ -1,15 +1,20 @@
 import { siteConfig } from './metadata'
 
-export function generateOrganizationSchema() {
+export function generateOrganizationSchema(settings?: any) {
+    const name = settings?.companyName || siteConfig.name;
+    const description = settings?.metaDescription || siteConfig.description;
+    const address = settings?.address || 'Istanbul, TR';
+
     return {
         '@context': 'https://schema.org',
         '@type': 'FurnitureStore',
-        name: siteConfig.name,
+        name: name,
         url: siteConfig.url,
         logo: `${siteConfig.url}/logo.png`,
-        description: siteConfig.description,
+        description: description,
         address: {
             '@type': 'PostalAddress',
+            streetAddress: address,
             addressLocality: 'Istanbul',
             addressCountry: 'TR',
         },

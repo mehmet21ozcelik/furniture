@@ -17,10 +17,16 @@ const lato = Lato({
     variable: "--font-body",
 });
 
-export const metadata: Metadata = {
-    title: "Mobilya Vitrin",
-    description: "Modern mobilya ürün kataloğu ve tanıtım sitesi.",
-};
+import { getSiteSettings } from "@/lib/services/settings.service";
+import { siteConfig } from "@/lib/seo/metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+    const settings = await getSiteSettings();
+    return {
+        title: settings.metaTitle || siteConfig.name,
+        description: settings.metaDescription || siteConfig.description,
+    };
+}
 
 export default function PublicLayout({
     children,
