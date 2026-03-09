@@ -1,7 +1,7 @@
 import { prisma } from '../db';
 import { unstable_cache } from 'next/cache';
 import { CACHE_TAGS } from '../cache/tags';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export type SiteSettings = {
     companyName: string;
@@ -59,22 +59,27 @@ export const getSiteSettings = unstable_cache(
     { tags: ['settings'] }
 );
 
-export async function updateSettings(data: SiteSettings) {
+export async function updateSettings(data: Partial<SiteSettings>) {
     try {
-        const promises = Object.entries(data).map(([key, value]) => {
-            return prisma.setting.upsert({
-                where: { key },
-                update: { value },
-                create: { key, value },
-            });
-        });
+        // Obje içinde null veya undefined olmayan geçerli değerleri al
+        const settingsToUpdate = Object.entries(data).filter(([_, value]) => value !== undefined && value !== null);
 
-        await Promise.all(promises);
+        // Tüm güncellemeleri tek bir veritabanı işlemi (transaction) içinde sırayla yap
+        await prisma.$transaction(
+            settingsToUpdate.map(([key, value]) => {
+                return prisma.setting.upsert({
+                    where: { key },
+                    update: { value: String(value) },
+                    create: { key, value: String(value) },
+                });
+            })
+        );
 
         revalidatePath("/", "layout");
+        revalidateTag(CACHE_TAGS.settings);
         return { success: true };
     } catch (error) {
         console.error("Error updating settings:", error);
-        throw new Error("Ayarlar güncellenirken bir hata oluştu.");
+        throw new Error("Ayarlar kaydedilirken sunucu hatası oluştu.");
     }
 }
