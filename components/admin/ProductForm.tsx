@@ -76,6 +76,21 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             if (result?.data?.success) {
                 router.push('/admin/products');
                 router.refresh();
+            } else if (result?.validationErrors) {
+                // Handle Zod validation errors
+                const errors = result.validationErrors as any;
+                const firstErrorKey = Object.keys(errors)[0];
+                const firstErrorMatch = errors[firstErrorKey];
+
+                let errorMessage = "Doğrulama hatası.";
+
+                if (firstErrorMatch?._errors?.length > 0) {
+                    errorMessage = firstErrorMatch._errors[0];
+                } else if (typeof firstErrorMatch === 'string') {
+                    errorMessage = firstErrorMatch;
+                }
+
+                setError(errorMessage);
             } else if (result?.data?.error) {
                 setError(result.data.error);
             } else if (result?.serverError) {
@@ -162,7 +177,7 @@ export function ProductForm({ categories, initialData }: ProductFormProps) {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Ürün Resimleri</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Ürün Resimleri *</label>
                 <ImageUploadField
                     value={images}
                     onUploadComplete={handleUploadComplete}
