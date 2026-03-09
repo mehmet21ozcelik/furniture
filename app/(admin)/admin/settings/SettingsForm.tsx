@@ -64,7 +64,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form key={JSON.stringify(initialSettings)} onSubmit={handleSubmit} className="space-y-8">
             {message && (
                 <div className={`p-4 rounded-md border text-sm ${message.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
                     }`}>
