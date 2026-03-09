@@ -98,10 +98,10 @@ jobs:
             # Sync database schema (using project's internal prisma)
             docker compose exec -T web npx prisma db push
             
-            # CRITICAL: Clean up Docker build cache to maintain disk health
-            docker builder prune -af --filter "until=1h"
+            # Target only this project's old unused images to free space without affecting others
+            docker image prune -f --filter "label=project=furniture"
             
-            # Optional: Clean up old unused images to free up space
-            docker image prune -f
+            # General build cache cleanup (with safety window, still safe for other projects as it only clears dangling build steps)
+            docker builder prune -af --filter "until=1h"
             
             echo "Deployment successful: Image rebuilt without cache and container recreated!"

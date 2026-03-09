@@ -19,6 +19,7 @@ RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
+LABEL project=furniture
 WORKDIR /app
 ENV NODE_ENV production
 RUN apk add --no-cache openssl
