@@ -32,23 +32,25 @@ const DEFAULT_SETTINGS: SiteSettings = {
 export const getSiteSettings = unstable_cache(
     async (): Promise<SiteSettings> => {
         try {
-            const settings = await prisma.setting.findMany();
-            const settingsMap = settings.reduce((acc, curr) => {
-                acc[curr.key] = curr.value;
-                return acc;
-            }, {} as Record<string, string>);
+            const settings = await prisma.siteSettings.findUnique({
+                where: { id: "settings" }
+            });
+
+            if (!settings) {
+                return DEFAULT_SETTINGS;
+            }
 
             return {
-                companyName: settingsMap.companyName || DEFAULT_SETTINGS.companyName,
-                phone: settingsMap.phone || DEFAULT_SETTINGS.phone,
-                email: settingsMap.email || DEFAULT_SETTINGS.email,
-                address: settingsMap.address || DEFAULT_SETTINGS.address,
-                whatsapp: settingsMap.whatsapp || DEFAULT_SETTINGS.whatsapp,
-                heroTitle: settingsMap.heroTitle || DEFAULT_SETTINGS.heroTitle,
-                heroSubtitle: settingsMap.heroSubtitle || DEFAULT_SETTINGS.heroSubtitle,
-                heroImage: settingsMap.heroImage || DEFAULT_SETTINGS.heroImage,
-                metaTitle: settingsMap.metaTitle || DEFAULT_SETTINGS.metaTitle,
-                metaDescription: settingsMap.metaDescription || DEFAULT_SETTINGS.metaDescription,
+                companyName: settings.companyName,
+                phone: settings.phone,
+                email: settings.email,
+                address: settings.address,
+                whatsapp: settings.whatsapp,
+                heroTitle: settings.heroTitle,
+                heroSubtitle: settings.heroSubtitle,
+                heroImage: settings.heroImage,
+                metaTitle: settings.metaTitle,
+                metaDescription: settings.metaDescription,
             };
         } catch (error) {
             console.error("Error fetching settings:", error);
@@ -61,19 +63,19 @@ export const getSiteSettings = unstable_cache(
 
 export async function updateSettings(data: Partial<SiteSettings>) {
     try {
-        // Obje içinde null veya undefined olmayan geçerli değerleri al
-        const settingsToUpdate = Object.entries(data).filter(([_, value]) => value !== undefined && value !== null);
-
-        // Tüm güncellemeleri tek bir veritabanı işlemi (transaction) içinde sırayla yap
-        await prisma.$transaction(
-            settingsToUpdate.map(([key, value]) => {
-                return prisma.setting.upsert({
-                    where: { key },
-                    update: { value: String(value) },
-                    create: { key, value: String(value) },
-                });
-            })
+        const updateData = Object.fromEntries(
+            Object.entries(data).filter(([_, value]) => value !== undefined && value !== null)
         );
+
+        await prisma.siteSettings.upsert({
+            where: { id: "settings" },
+            update: updateData,
+            create: {
+                id: "settings",
+                ...DEFAULT_SETTINGS,
+                ...updateData,
+            },
+        });
 
         revalidatePath("/", "layout");
         revalidateTag(CACHE_TAGS.settings);

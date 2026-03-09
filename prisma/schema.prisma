@@ -50,9 +50,17 @@ model Product {
   updatedAt        DateTime @updatedAt
 }
 
-model Setting {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     String   @db.Text
-  updatedAt DateTime @updatedAt
+model SiteSettings {
+  id              String   @id @default("settings")
+  companyName     String   @default("Mobilya Vitrin")
+  phone           String   @default("")
+  email           String   @default("")
+  whatsapp        String   @default("")
+  address         String   @db.Text @default("")
+  heroTitle       String   @default("Evinize Değer Katan Tasarımlar")
+  heroSubtitle    String   @db.Text @default("Modern, şık ve konforlu mobilyalar ile yaşam alanlarınızı yeniden keşfedin.")
+  heroImage       String   @db.Text @default("https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1920")
+  metaTitle       String   @default("Mobilya Vitrin | Modern Mobilya Tasarımları")
+  metaDescription String   @db.Text @default("En şık ve modern mobilya koleksiyonları.")
+  updatedAt       DateTime @updatedAt
 }
