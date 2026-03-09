@@ -51,7 +51,7 @@ model Product {
 }
 
 model Setting {
-  id        String   @id @default("site-settings")
+  id        String   @id @default(cuid())
   key       String   @unique
   value     String   @db.Text
   updatedAt DateTime @updatedAt
