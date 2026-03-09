@@ -16,7 +16,10 @@ export const updateSettingsAction = actionClient
             return { success: true };
         } catch (error: any) {
             console.error("Error updating settings:", error);
-            return { success: false, error: "Ayarlar güncellenirken bir hata oluştu." };
+            return {
+                success: false,
+                error: `Ayarlar güncellenirken bir hata oluştu: ${error.message || "Bilinmeyen hata"}`
+            };
         }
     });
 

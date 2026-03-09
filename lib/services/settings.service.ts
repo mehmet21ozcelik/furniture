@@ -63,11 +63,20 @@ export const getSiteSettings = unstable_cache(
 
 export async function updateSettings(data: Partial<SiteSettings>) {
     try {
+        console.log("updateSettings called with data:", JSON.stringify(data, null, 2));
+
         const updateData = Object.fromEntries(
             Object.entries(data).filter(([_, value]) => value !== undefined && value !== null)
         );
 
-        await prisma.siteSettings.upsert({
+        console.log("Processed updateData:", JSON.stringify(updateData, null, 2));
+
+        if (!prisma.siteSettings) {
+            console.error("prisma.siteSettings is UNDEFINED!");
+            throw new Error("Veritabanı yapılandırması güncel değil (siteSettings eksik).");
+        }
+
+        const result = await prisma.siteSettings.upsert({
             where: { id: "settings" },
             update: updateData,
             create: {
@@ -77,11 +86,13 @@ export async function updateSettings(data: Partial<SiteSettings>) {
             },
         });
 
+        console.log("Upsert result:", JSON.stringify(result, null, 2));
+
         revalidatePath("/", "layout");
         revalidateTag(CACHE_TAGS.settings);
         return { success: true };
-    } catch (error) {
-        console.error("Error updating settings:", error);
-        throw new Error("Ayarlar kaydedilirken sunucu hatası oluştu.");
+    } catch (error: any) {
+        console.error("DETAILED Error updating settings:", error);
+        throw new Error(`Ayarlar kaydedilirken hata oluştu: ${error.message || "Bilinmeyen sunucu hatası"}`);
     }
 }

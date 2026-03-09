@@ -1,23 +1,18 @@
-
 const { PrismaClient } = require('@prisma/client');
-
 const prisma = new PrismaClient();
 
 async function main() {
-    const products = await prisma.product.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 5,
-        include: { category: true }
-    });
+    try {
+        const tables = await prisma.$queryRaw`SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'`;
+        console.log("Tables:", tables);
 
-    console.log(JSON.stringify(products, null, 2));
+        const siteSettings = await prisma.siteSettings.findMany();
+        console.log("SiteSettings content:", siteSettings);
+    } catch (error) {
+        console.error("DB CHECK ERROR:", error);
+    } finally {
+        await prisma.$disconnect();
+    }
 }
 
-main()
-    .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+main();
