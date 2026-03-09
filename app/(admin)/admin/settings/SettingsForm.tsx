@@ -43,8 +43,23 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         if (result?.data?.success) {
             setMessage({ type: 'success', text: 'Ayarlar başarıyla kaydedildi.' });
             router.refresh();
+        } else if (result?.validationErrors) {
+            // Handle Zod validation errors
+            const errors = result.validationErrors as any;
+            const firstErrorKey = Object.keys(errors)[0];
+            const firstErrorMatch = errors[firstErrorKey];
+
+            let errorMessage = "Doğrulama hatası.";
+
+            if (firstErrorMatch?._errors?.length > 0) {
+                errorMessage = firstErrorMatch._errors[0];
+            } else if (typeof firstErrorMatch === 'string') {
+                errorMessage = firstErrorMatch;
+            }
+
+            setMessage({ type: 'error', text: errorMessage });
         } else {
-            setMessage({ type: 'error', text: result?.data?.error || 'Bir hata oluştu.' });
+            setMessage({ type: 'error', text: result?.data?.error || result?.serverError || 'Bir hata oluştu.' });
         }
     };
 
@@ -62,8 +77,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium border-b pb-2">Genel & İletişim Bilgileri</h3>
                     <div>
-                        <label className="text-sm font-medium">Firma Adı</label>
-                        <Input name="companyName" defaultValue={initialSettings.companyName} className="mt-1" />
+                        <label className="text-sm font-medium">Firma Adı *</label>
+                        <Input name="companyName" required defaultValue={initialSettings.companyName} className="mt-1" />
                     </div>
                     <div>
                         <label className="text-sm font-medium">Telefon</label>
@@ -91,8 +106,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium border-b pb-2">Ana Sayfa (Hero) Ayarları</h3>
                     <div>
-                        <label className="text-sm font-medium">Hero Başlığı</label>
-                        <Input name="heroTitle" defaultValue={initialSettings.heroTitle} className="mt-1" />
+                        <label className="text-sm font-medium">Hero Başlığı *</label>
+                        <Input name="heroTitle" required defaultValue={initialSettings.heroTitle} className="mt-1" />
                     </div>
                     <div>
                         <label className="text-sm font-medium">Hero Alt Başlığı</label>

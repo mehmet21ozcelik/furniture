@@ -48,6 +48,21 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
         if (result?.data?.success) {
             router.push("/admin/categories");
             router.refresh();
+        } else if (result?.validationErrors) {
+            // Handle Zod validation errors
+            const errors = result.validationErrors as any;
+            const firstErrorKey = Object.keys(errors)[0];
+            const firstErrorMatch = errors[firstErrorKey];
+
+            let errorMessage = "Doğrulama hatası.";
+
+            if (firstErrorMatch?._errors?.length > 0) {
+                errorMessage = firstErrorMatch._errors[0];
+            } else if (typeof firstErrorMatch === 'string') {
+                errorMessage = firstErrorMatch;
+            }
+
+            setError(errorMessage);
         } else if (result?.data?.error) {
             setError(result.data.error);
         } else if (result?.serverError) {
@@ -67,7 +82,7 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
 
             <div className="space-y-4">
                 <div>
-                    <label className="text-sm font-medium" htmlFor="name">Kategori Adı</label>
+                    <label className="text-sm font-medium" htmlFor="name">Kategori Adı *</label>
                     <Input
                         id="name"
                         name="name"

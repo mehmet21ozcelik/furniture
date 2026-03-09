@@ -8,7 +8,7 @@ export const siteSettingsSchema = z.object({
     whatsapp: z.string().optional().default(""),
     heroTitle: z.string().min(1, "Hero başlığı gerekli"),
     heroSubtitle: z.string().optional().default(""),
-    heroImage: z.string().url("Geçerli bir görsel URL'si girin").optional().or(z.literal("")).transform(v => v || ""),
+    heroImage: z.string().optional().or(z.literal("")).transform(v => v || ""),
     metaTitle: z.string().optional().default(""),
     metaDescription: z.string().optional().default(""),
 });
