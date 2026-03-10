@@ -90,14 +90,20 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             
-            # 1. Bild and Start
-            # --build flag will handle building and starting in one go
-            # This is less likely to timeout than separate build and down commands
+            # 1. PRE-CLEANUP: Build öncesi eski artıkları temizleyip RAM/Disk açıyoruz
+            docker system prune -f --filter "until=24h"
+            docker image prune -f --filter "label=project=furniture"
+            
+            # 2. BUILD & RESTART: En temiz yöntem budur
+            # down/up döngüsü eski permission (yetki) hatalarını süpürür
+            docker compose down
             docker compose up -d --build
             
-            # 2. Disk Cleanup (Background - don't wait for completion)
+            # 3. POST-CLEANUP: Build sonrası oluşan gereksiz katmanları arka planda temizle
+            # & kullanımı SSH kopsa bile sunucunun kendi kendine temizlenmesini sağlar
+            docker builder prune -af --filter "until=1h" &
             docker image prune -f --filter "label=project=furniture" &
             
-            echo "Deployment triggered. Please wait 1-2 minutes for the site to be fully ready."
+            echo "Deployment successful! Disk cleaned and services restarted."
             
             echo "Deployment successful! The application will update the database on startup."
