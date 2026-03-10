@@ -63,4 +63,6 @@ model SiteSettings {
   metaTitle       String   @default("Mobilya Vitrin | Modern Mobilya Tasarımları")
   metaDescription String   @db.Text @default("En şık ve modern mobilya koleksiyonları.")
   updatedAt       DateTime @updatedAt
+
+  @@map("SiteSettings")
 }

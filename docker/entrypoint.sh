@@ -2,21 +2,25 @@
 
 echo "--- STARTING ENTRYPOINT ---"
 
-# Veritabanının hazır olmasını bekle (Max 30 saniye)
-echo "Veritabanı bağlantısı kontrol ediliyor..."
+# Veritabanının hazır olmasını bekle
+echo "Veritabanı senkronizasyonu başlatılıyor..."
 timer=0
-until npx prisma db push --accept-data-loss || [ $timer -eq 30 ]; do
-  echo "Veritabanı henüz hazır değil, bekleniyor ($timer/30)..."
-  sleep 2
-  timer=$((timer + 2))
+
+# npx'in prisma'yı bulduğundan emin olalım
+echo "Prisma versiyonu kontrol ediliyor..."
+./node_modules/.bin/prisma -v || npx prisma -v
+
+until ./node_modules/.bin/prisma db push --accept-data-loss || npx prisma db push --accept-data-loss || [ $timer -eq 20 ]; do
+  echo "Veritabanına bağlanılamadı veya tablo oluşturulamadı, bekleniyor ($timer/20)..."
+  sleep 4
+  timer=$((timer + 4))
 done
 
-if [ $timer -eq 30 ]; then
-  echo "⚠️ UYARI: Veritabanına 30 saniye içinde ulaşılamadı. Uygulama yine de başlatılıyor..."
+if [ $timer -ge 20 ]; then
+  echo "⚠️ UYARI: Veritabanı senkronizasyonu tamamlanamamış olabilir."
 else
-  echo "✓ Veritabanı başarıyla güncellendi."
+  echo "✓ Veritabanı başarıyla senkronize edildi."
 fi
 
-echo "Uygulama başlatılıyor (server.js)..."
-# Uygulamayı başlat, hata alsa bile entrypoint'i durdurma
+echo "Uygulama başlatılıyor (node server.js)..."
 exec node server.js
