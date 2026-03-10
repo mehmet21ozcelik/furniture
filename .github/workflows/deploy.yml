@@ -90,15 +90,20 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             
-            # 1. Build the new image (Host handles the heavy lifting)
+            # 1. Cleanup old build artifacts and images BEFORE building to free RAM/Disk
+            docker system prune -f --filter "until=24h"
+            docker image prune -f --filter "label=project=furniture"
+            
+            # 2. Build the new image
+            # Removed --no-cache to speed up builds and reduce CPU load on the small server
             docker compose build web
             
-            # 2. Restart services
-            # The new image will automatically run 'prisma db push' on startup via entrypoint.sh
+            # 3. Restart services
+            # This will trigger the new entrypoint.sh which handles the DB sync
             docker compose up -d --force-recreate web db
             
-            # 3. Cleanup
-            docker image prune -f --filter "label=project=furniture"
-            docker builder prune -af --filter "until=1h"
+            # 4. Final Verification
+            sleep 5
+            docker ps | grep furniture
             
             echo "Deployment successful! The application will update the database on startup."
