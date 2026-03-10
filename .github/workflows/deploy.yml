@@ -90,22 +90,15 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             
-            # 1. Build the new image (This is the heavy part)
+            # 1. Build the new image (Host handles the heavy lifting)
             docker compose build web
             
-            # 2. Start/Update the service
+            # 2. Restart services
+            # The new image will automatically run 'prisma db push' on startup via entrypoint.sh
             docker compose up -d --force-recreate web db
             
-            # 3. Wait a few seconds for containers to be ready
-            sleep 10
-            
-            # 4. Force DB sync inside the running container
-            # This is the most reliable way to create the SiteSettings table
-            echo "Enforcing database schema sync..."
-            docker compose exec -T web npx prisma db push --accept-data-loss
-            
-            # 5. Cleanup
+            # 3. Cleanup
             docker image prune -f --filter "label=project=furniture"
             docker builder prune -af --filter "until=1h"
             
-            echo "Deployment successful!"
+            echo "Deployment successful! The application will update the database on startup."
