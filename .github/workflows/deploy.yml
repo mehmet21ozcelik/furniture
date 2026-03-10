@@ -90,14 +90,15 @@ jobs:
             git reset --hard origin/main
             git status
             
-            # Rebuild and start the app container
-            # Using --no-cache and --force-recreate to ensure stale artifacts are purged
+            # 1. Build the new image without cache to ensure latest code/schema
             docker compose build --no-cache web
-            docker compose up -d --force-recreate web
             
-            # Sync database schema (using project's internal prisma)
-            # Added --accept-data-loss to ensure schema changes are applied automatically
-            docker compose exec -T web npx prisma db push --accept-data-loss
+            # 2. Run DB push using the NEW image before starting/restarting the service
+            # This ensures the table is created even if the main container isn't up yet
+            docker compose run --rm web npx prisma db push --accept-data-loss
+            
+            # 3. Start/Restart the containers with the new image
+            docker compose up -d --force-recreate web
             
             # Target only this project's old unused images to free space without affecting others
             docker image prune -f --filter "label=project=furniture"
