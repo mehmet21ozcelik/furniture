@@ -90,23 +90,14 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             
-            # 1. Sync and Build
-            docker compose build web
+            # 1. Bild and Start
+            # --build flag will handle building and starting in one go
+            # This is less likely to timeout than separate build and down commands
+            docker compose up -d --build
             
-            # 2. Stop and Remove old containers (Force clean state for new entrypoint)
-            docker compose down
+            # 2. Disk Cleanup (Background - don't wait for completion)
+            docker image prune -f --filter "label=project=furniture" &
             
-            # 3. Start services
-            docker compose up -d
-            
-            # 4. DISK CLEANUP (En sona aldık ki site ayağa kalkmadan zaman kaybetmeyelim)
-            echo "Cleaning up disk space..."
-            docker image prune -f --filter "label=project=furniture"
-            docker system prune -f --filter "until=24h"
-            
-            # 5. Final Verification
-            sleep 5
-            docker ps
-            docker compose logs --tail=10 web
+            echo "Deployment triggered. Please wait 1-2 minutes for the site to be fully ready."
             
             echo "Deployment successful! The application will update the database on startup."
