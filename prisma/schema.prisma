@@ -64,5 +64,5 @@ model SiteSettings {
   metaDescription String   @db.Text @default("En şık ve modern mobilya koleksiyonları.")
   updatedAt       DateTime @updatedAt
 
-  @@map("SiteSettings")
+  @@map("site_settings")
 }
