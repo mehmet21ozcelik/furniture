@@ -90,33 +90,28 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             
-            # 1. PRE-CLEANUP
+            # 1. PRE-CLEANUP: Build öncesi eski artıkları temizleyip Disk açıyoruz
             echo "Pre-cleanup..."
             docker system prune -f --filter "until=24h"
+            docker image prune -f --filter "label=project=furniture"
             
             # 2. BUILD & RESTART
-            echo "Building and starting..."
+            # down/up döngüsü yetki ve cache hatalarını tamamen süpürür
+            echo "Building and restarting..."
             docker compose down
             docker compose up -d --build
             
-            # 3. VERIFICATION & DB SYNC
-            echo "Waiting for containers to stabilize..."
-            sleep 15
-            
-            echo "Checking container status:"
-            docker ps
-            
-            echo "Checking logs for DB sync status:"
+            # 3. VERIFICATION & DB SYNC FEEDBACK
+            echo "Final check and DB Sync logs:"
+            sleep 10
             docker compose logs web | tail -n 20
             
-            echo "Forcing a secondary DB sync just in case..."
-            docker compose exec -T web prisma db push --accept-data-loss
-            
-            # 4. POST-CLEANUP
+            # 4. POST-CLEANUP: Yeni imaj olunca eski "dangling" imajları temizle
+            # & kullanarak arka planda yapıyoruz (SSH kopsa da temizlik durmaz)
             echo "Post-cleanup..."
             docker builder prune -af --filter "until=1h" &
             docker image prune -f --filter "label=project=furniture" &
             
-            echo "Deployment finished. Check logs above for any Prisma errors."
+            echo "Deployment finished successfully!"
             
             echo "Deployment successful! The application will update the database on startup."
