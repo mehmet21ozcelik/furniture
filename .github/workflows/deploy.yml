@@ -110,7 +110,7 @@ jobs:
             docker compose logs web | tail -n 20
             
             echo "Forcing a secondary DB sync just in case..."
-            docker compose exec -T web ./node_modules/.bin/prisma db push --accept-data-loss || docker compose exec -T web npx prisma db push --accept-data-loss
+            docker compose exec -T web prisma db push --accept-data-loss
             
             # 4. POST-CLEANUP
             echo "Post-cleanup..."

@@ -25,8 +25,8 @@ LABEL project=furniture
 WORKDIR /app
 ENV NODE_ENV production
 RUN apk add --no-cache openssl
-# Uncomment the following line in case you want to disable telemetry during runtime.
-ENV NEXT_TELEMETRY_DISABLED 1
+# CRITICAL: Install Prisma globally so it's ALWAYS available for migrations
+RUN npm install -g prisma@5.10.0
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -34,14 +34,10 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 RUN mkdir -p public/uploads && chown -R nextjs:nodejs public/uploads
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-# Automatically leverage output traces to reduce image size
+
+# Automatically leverage output traces
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# CRITICAL: Copy Prisma CLI and schema so it's available for entrypoint.sh on the runner
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
-COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
 # Copy and set permissions for entrypoint
 COPY --from=builder --chown=nextjs:nodejs /app/docker/entrypoint.sh ./entrypoint.sh
