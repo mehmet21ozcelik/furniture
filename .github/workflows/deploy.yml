@@ -81,37 +81,31 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
+          command_timeout: 20m
           script: |
             # Navigate to the project folder
             cd /home/mcp-admin/furniture
             
-            # CRITICAL: Ensure we are on the correct branch and sync with origin
+            # Sync with origin
             git fetch origin main
             git reset --hard origin/main
-            git status
             
-            # 1. Build the new image
-            docker compose build --no-cache web
+            # 1. Build the new image (This is the heavy part)
+            docker compose build web
             
-            # 2. Start the database first to ensure it's ready
-            docker compose up -d db
-            sleep 5 # Wait for DB to be ready inside the network
+            # 2. Start/Update the service
+            docker compose up -d --force-recreate web db
             
-            # 3. Force DB sync and CAPTURE output
-            echo "Running Prisma DB Push..."
-            docker compose run --rm web npx prisma db push --accept-data-loss
+            # 3. Wait a few seconds for containers to be ready
+            sleep 10
             
-            # 4. Start/Restart the web service
-            docker compose up -d --force-recreate web
-            
-            # 5. Final check: List tables to confirm SiteSettings exists
-            echo "Verifying tables..."
+            # 4. Force DB sync inside the running container
+            # This is the most reliable way to create the SiteSettings table
+            echo "Enforcing database schema sync..."
             docker compose exec -T web npx prisma db push --accept-data-loss
             
-            # Target only this project's old unused images to free space without affecting others
+            # 5. Cleanup
             docker image prune -f --filter "label=project=furniture"
-            
-            # General build cache cleanup (with safety window, still safe for other projects as it only clears dangling build steps)
             docker builder prune -af --filter "until=1h"
             
-            echo "Deployment successful: Image rebuilt without cache and container recreated!"
+            echo "Deployment successful!"
